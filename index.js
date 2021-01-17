@@ -14,22 +14,45 @@ const volume = document.querySelector('input[name="volume"]')
 // * przypisanie glosnosci do interface GainNode,
 // * wywolanie funkcji tworzacej klawisze
 function synthSetup() {
-  // ...
-
+  createKeyboard();
   masterGainNode = audioContext.createGain()
   masterGainNode.connect(audioContext.destination)
   masterGainNode.gain.value = volume.value
+
+  volume.addEventListener('change', changeVolume);
 }
 
 // Przejscie po ustawionej na sztywno tablicy czestotliwosci dzwiekow
 // oraz utworzenie dla kazdej klawisza
 function createKeyboard() {
-  // ...
+  frequency.forEach(function(element){
+    keyboard.appendChild(createKey(element));
+  });
 }
 
 // Utworzenie pojedynczego klawisza reprezentujacego kolejny dzwiek
 function createKey(key) {
-  // ... Hint: uzyj dataset
+  let keyElement = document.createElement('div');
+  let labelElement = document.createElement('div');
+
+  const tone = key[0];
+  const frequency = key[1];
+
+  keyElement.className = 'keyboard__key';
+
+  keyElement.dataset['tone'] = tone;
+  keyElement.dataset['frequency'] = frequency;
+
+  labelElement.innerHTML = tone;
+
+  keyElement.appendChild(labelElement);
+
+  keyElement.addEventListener('mousedown', keyPressed);
+  keyElement.addEventListener('mouseup', keyReleased);
+  keyElement.addEventListener('mouseover', keyPressed);
+  keyElement.addEventListener('mouseleave', keyReleased);
+
+  return keyElement;
 }
 
 // Modyfikacja wartosci dla GainNode - callback dla listenera zmiany glosnosci
